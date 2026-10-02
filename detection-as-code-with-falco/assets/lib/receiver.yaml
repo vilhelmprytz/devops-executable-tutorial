@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: falco-webhook-receiver
+  namespace: falco
+  labels: { app: falco-webhook-receiver }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: falco-webhook-receiver } }
+  template:
+    metadata: { labels: { app: falco-webhook-receiver } }
+    spec:
+      containers:
+        - name: echo
+          image: mendhak/http-https-echo:42
+          env:
+            - { name: HTTP_PORT, value: "8080" }
+            - { name: LOG_WITHOUT_NEWLINE, value: "true" }
+            - { name: DISABLE_REQUEST_LOGS, value: "true" }
+          ports:
+            - { containerPort: 8080 }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: falco-webhook-receiver
+  namespace: falco
+spec:
+  selector: { app: falco-webhook-receiver }
+  ports:
+    - { port: 8080, targetPort: 8080 }

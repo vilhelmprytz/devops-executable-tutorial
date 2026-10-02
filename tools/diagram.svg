@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1000" height="620" fill="#ffffff"/>
+  <text x="500" y="38" text-anchor="middle" font-size="24" font-weight="bold" fill="#1a1a2e">Detection as Code with Falco</text>
+  <text x="500" y="60" text-anchor="middle" font-size="14" fill="#555">Two-node Kubernetes cluster (kubeadm, containerd, modern eBPF)</text>
+
+  <!-- defs: arrow marker -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#444"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Runtime detection row ===== -->
+  <!-- sample app -->
+  <rect x="40" y="110" width="200" height="90" rx="8" fill="#fde2e4" stroke="#c9184a" stroke-width="2"/>
+  <text x="140" y="140" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a2e">Sample web app</text>
+  <text x="140" y="162" text-anchor="middle" font-size="12" fill="#444">namespace: webapp</text>
+  <text x="140" y="180" text-anchor="middle" font-size="12" fill="#c9184a">deliberately vulnerable</text>
+
+  <!-- falco -->
+  <rect x="330" y="95" width="250" height="120" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="455" y="122" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a2e">Falco DaemonSet</text>
+  <text x="455" y="144" text-anchor="middle" font-size="12" fill="#444">modern eBPF driver (in kernel)</text>
+  <text x="455" y="164" text-anchor="middle" font-size="12" fill="#444">container plugin (k8s enrichment)</text>
+  <text x="455" y="184" text-anchor="middle" font-size="12" fill="#444">rule engine: default + custom rules</text>
+  <text x="455" y="204" text-anchor="middle" font-size="12" fill="#444">privileged, one pod per node</text>
+
+  <!-- sidekick -->
+  <rect x="680" y="110" width="230" height="90" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="795" y="140" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a2e">Falcosidekick</text>
+  <text x="795" y="162" text-anchor="middle" font-size="12" fill="#444">routes alerts to outputs</text>
+  <text x="795" y="180" text-anchor="middle" font-size="12" fill="#444">namespace: falco</text>
+
+  <!-- arrows row 1 -->
+  <line x1="240" y1="155" x2="326" y2="155" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="283" y="147" text-anchor="middle" font-size="11" fill="#666">syscalls</text>
+  <line x1="580" y1="155" x2="676" y2="155" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="628" y="147" text-anchor="middle" font-size="11" fill="#666">alert (JSON)</text>
+
+  <!-- outputs -->
+  <rect x="680" y="270" width="110" height="70" rx="8" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/>
+  <text x="735" y="300" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a2e">Web UI</text>
+  <text x="735" y="320" text-anchor="middle" font-size="11" fill="#444">you watch</text>
+
+  <rect x="810" y="270" width="150" height="70" rx="8" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/>
+  <text x="885" y="296" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a2e">Webhook receiver</text>
+  <text x="885" y="316" text-anchor="middle" font-size="11" fill="#444">pipeline reads</text>
+  <text x="885" y="332" text-anchor="middle" font-size="11" fill="#444">(kubectl logs)</text>
+
+  <line x1="770" y1="200" x2="740" y2="266" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="820" y1="200" x2="875" y2="266" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- divider -->
+  <line x1="40" y1="395" x2="960" y2="395" stroke="#ddd" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="50" y="388" font-size="13" font-weight="bold" fill="#777">DETECTION AS CODE - the pipeline</text>
+
+  <!-- ===== pipeline row ===== -->
+  <rect x="40" y="420" width="220" height="110" rx="8" fill="#ede7f6" stroke="#5e35b1" stroke-width="2"/>
+  <text x="150" y="447" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a2e">Rules repo (git)</text>
+  <text x="150" y="469" text-anchor="middle" font-size="12" fill="#444">rules/*.yaml</text>
+  <text x="150" y="487" text-anchor="middle" font-size="12" fill="#444">tests/tests.yaml</text>
+  <text x="150" y="505" text-anchor="middle" font-size="12" fill="#444">git push -&gt; pre-receive hook</text>
+  <text x="150" y="521" text-anchor="middle" font-size="11" fill="#777">(stands in for hosted CI)</text>
+
+  <rect x="320" y="420" width="430" height="110" rx="8" fill="#f3e5f5" stroke="#8e24aa" stroke-width="2"/>
+  <text x="535" y="447" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a2e">Pipeline</text>
+  <text x="535" y="472" text-anchor="middle" font-size="12.5" fill="#444">validate (falco -V) -&gt; helm upgrade -&gt; wait rollout</text>
+  <text x="535" y="492" text-anchor="middle" font-size="12.5" fill="#444">-&gt; run detection tests -&gt; pass, or roll back</text>
+  <text x="535" y="516" text-anchor="middle" font-size="11.5" fill="#777">a broken rule, or one that stops firing, never stays deployed</text>
+
+  <line x1="260" y1="475" x2="316" y2="475" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="288" y="467" text-anchor="middle" font-size="11" fill="#666">push</text>
+
+  <!-- pipeline deploys to falco -->
+  <line x1="600" y1="420" x2="520" y2="219" stroke="#8e24aa" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+  <text x="600" y="330" text-anchor="middle" font-size="11" fill="#8e24aa">helm upgrade</text>
+  <text x="600" y="346" text-anchor="middle" font-size="11" fill="#8e24aa">(deploy rules)</text>
+
+  <!-- pipeline tests read receiver -->
+  <line x1="750" y1="460" x2="885" y2="344" stroke="#8e24aa" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+  <text x="845" y="420" text-anchor="middle" font-size="11" fill="#8e24aa">tests read alerts</text>
+</svg>

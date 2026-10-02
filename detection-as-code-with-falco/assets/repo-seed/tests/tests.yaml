@@ -1,0 +1,14 @@
+# Detection tests, managed as code. Each test's `run` command executes inside a
+# throwaway pod cloned from the app (same namespace), then the pipeline checks
+# the webhook receiver for the expected alert, scoped to that exact pod.
+#
+#   - name: <human-readable name>
+#     run:  <shell command to run inside the test pod>
+#     expect: <rule name that MUST fire>          # positive test
+#   - name: ...
+#     run:  ...
+#     expect_no_alert: <rule name that must NOT fire>   # negative test
+
+- name: reading /etc/shadow is detected
+  run: cat /etc/shadow
+  expect: Read sensitive file untrusted

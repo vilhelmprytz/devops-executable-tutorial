@@ -1,0 +1,30 @@
+# Helm values for the falcosecurity/falco chart (9.2.0 -> Falco 0.45.0).
+# Every key here is load-bearing for the lab; see the plan's Global Constraints.
+driver:
+  kind: modern_ebpf          # no kernel module / driver build; works on the Killercoda image
+
+tty: true                    # flush Falco logs promptly (strip trailing \r when reading)
+
+falcoctl:
+  artifact:
+    install: { enabled: false }   # BOTH must be false, or /etc/falco ends up empty
+    follow:  { enabled: false }   # pins the image-bundled ruleset (falco-rules 5.2.0)
+
+falco:
+  rule_matching: all           # rules.d loads last; without this, stable rules shadow custom ones
+  append_output:
+    - suggested_output: true   # keep the chart's default output fields
+    - match: { source: syscall }
+      extra_fields: [k8s.ns.name, k8s.pod.name]   # 0.45 stable outputs omit these
+
+falcosidekick:
+  enabled: true
+  replicaCount: 1
+  config:
+    webhook:
+      address: "http://falco-webhook-receiver.falco.svc.cluster.local:8080/"
+  webui:
+    enabled: true
+    replicaCount: 1
+    redis:
+      storageEnabled: false    # no PVC -> avoids Pending without a default StorageClass

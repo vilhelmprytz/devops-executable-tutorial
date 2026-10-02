@@ -1,0 +1,18 @@
+#!/bin/bash
+# pre-receive: check out the pushed revision to a temp tree and run the pipeline.
+# Exit non-zero rejects the push, so the learner's rules only land once the
+# pipeline (validate -> deploy -> test) is green.
+set -uo pipefail
+while read -r _old newrev _ref; do
+  TMP=$(mktemp -d)
+  git archive "$newrev" | tar -x -C "$TMP"
+  echo
+  if bash "$TMP/pipeline/pipeline.sh"; then
+    rm -rf "$TMP"
+  else
+    rm -rf "$TMP"
+    echo
+    echo "PUSH REJECTED: the pipeline failed. Your rules were NOT kept; Falco was rolled back."
+    exit 1
+  fi
+done

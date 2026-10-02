@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: webapp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netcheck
+  namespace: webapp
+  labels: { app: netcheck }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: netcheck } }
+  template:
+    metadata: { labels: { app: netcheck } }
+    spec:
+      containers:
+        - name: netcheck
+          image: python:3.12-alpine
+          command: ["python3", "/src/app.py"]
+          securityContext:
+            runAsUser: 0          # root so sensitive-file reads succeed in the demo
+          volumeMounts:
+            - { name: src, mountPath: /src }
+          ports:
+            - { containerPort: 8080 }
+      volumes:
+        - name: src
+          configMap: { name: netcheck-src }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: netcheck
+  namespace: webapp
+spec:
+  type: NodePort
+  selector: { app: netcheck }
+  ports:
+    - { port: 8080, targetPort: 8080, nodePort: 30080 }
